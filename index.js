@@ -3,8 +3,9 @@ import helmet from 'helmet';
 import path from 'path';
 import escape_html from 'escape-html';
 import password_hash from './_public/scripts/password_hash.mjs';
-const port = 6969;
 import { Database } from "bun:sqlite";
+import { compare } from 'bcrypt';
+const port = 6969;
 
 //Connecting to the registered users database
 const users_db = new Database("./databases/users_database.sqlite");
@@ -21,7 +22,7 @@ application.get('/', (req, res) => {
 	
 });
 
-/*
+
 application.post('/', (req, res) => {
 	
 	//Getting form values to be treated
@@ -39,20 +40,11 @@ application.post('/', (req, res) => {
 
 	const escaped_user_nickname = escape_html(user_nickname);
 	const escaped_user_passkey = escape_html(user_passkey);
-	let user_hashed_passkey;
-	
-	password_hash(escaped_user_passkey)
-		.then((hashed_password) => {
-			const user_hashed_passkey = hashed_password;
-			console.log(escaped_user_nickname);
-			console.log(user_hashed_passkey);
-		})
-		.catch((error) => {
-			console.log("Error: ", error);
-		});
+
+	user_auth(escaped_user_nickname, escaped_user_passkey);
 
 });
-*/
+
 
 application.get('/signup', (req, res) => {
 	let signup_page = path.join(__dirname, './_public/templates', 'signup.html');
@@ -94,3 +86,25 @@ application.listen(port, () => {
 	console.log(`Started at http://localhost:${port}`);
 });
 
+
+async function user_auth(nickname, inserted_password){
+	try{
+		const get_user_query = `SELECT user_pass FROM users WHERE user_nick = '${nickname}'`;
+		const user_found = await users_db.query(get_user_query).get();
+
+		if (user_found){
+			const stored_hashed_password = user_found.user_pass;
+			const correct_password = await compare(inserted_password, stored_hashed_password);
+
+			if (correct_password){
+				console.log("User logged in!");
+			}else{
+				console.log("Incorrect password");
+			}
+		}else{
+			console.log("User not found");
+		}
+	}catch (error){
+		console.error("Error during authentication: ", error);
+	}
+}
