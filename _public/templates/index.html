@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title></title>
+		<title>Login</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link href="css/style.css" rel="stylesheet">
+		<link href="../assets/style.css" rel="stylesheet">
 	</head>
 	<body>
-		<h1>Professors Login</h1>
-		<form method="POST" action="">
-			<input type="text" name="user_nickname" value=""><br>
-			<input type="password" name="user_passkey" value=""><br>
-			<input type="submit" value="Enviar"></input>
-			<script src="../scripts/route_navigation.js"></script>
-		</form>	
+		<div class="form-wrapper">
+					<h1 class="title">Professors Login</h1>
+			<div class="form-area">
+				<form method="POST" action="">
+					<label>Nickname</label><br>
+					<input type="text" name="user_nickname" value=""><br>
+					<br>
+					<label>Password</label><br>
+					<input type="password" name="user_passkey" value=""><br>
+					<input class="form-button" type="submit" value="Login"></input>
+					<script src="../scripts/route_navigation.js"></script>
+				</form>	
+			</div>
+		</div>
+		<div class="info">
 			<p>Doesn't have an account?<p>
-			<button onclick="redirect_to_route('/signup')">Signup</button>
+			<button class="goto-button" onclick="redirect_to_route('/signup')">Signup</button>
+		</div>
 			<script src="../scripts/route_navigation.js"></script>
 	</body>
 </html>

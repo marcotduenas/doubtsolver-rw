@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,900;1,700&display=swap');
+
+*{
+	margin: 0;
+	padding: 0;
+	font-family: 'Lato', sans-serif;
+}
+
+
+.title{
+	margin: 2rem 0 .5rem;
+	text-align: center;
+	font-weight: bold;
+	color: #005577;
+}
+
+.form-wrapper{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 30vw;
+	height: 25vw;
+	margin: 6rem auto .2rem;
+	align-items: center;
+}
+
+.form-area{
+	padding: 20px;
+}
+
+
+input[type=text], input[type=password]{
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid #000000;
+	padding: 5px;
+}
+
+input:focus{
+	outline: 0 !important;
+}
+
+.info{
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+.form-button{
+	text-align: center;
+	margin: 2rem auto;
+	padding: 10px;
+	width: 10.7rem;
+	background-color: #005577;
+	color: #f8f8f8;
+	font-weight: bold;
+	border: 1px solid #005577;
+	border-radius: 20px;
+	cursor: pointer;
+}
+
+.form-button:hover{
+	background-color: #0E2C38;
+	border: 1px solid #0E2C38;
+	transition: .5s
+}
+
+.goto-button{
+	background-color: #f8f8f8;
+	text-align: center;
+	margin: 1.5rem auto;
+	padding: 10px;
+	width: 10.7rem;
+	border: 1px solid #000000;
+	border-radius: 20px;
+	cursor: pointer;
+}
+
+.goto-button:hover{
+	background-color: #000000;
+	color: #f8f8f8;
+	transition: .3s;
+	font-weight: bold;
+}
+
+@media only screen and (max-width: 600px){
+	.form-wrapper{
+		width: 75vw;
+		padding: 5rem 0;
+	}
+
+	.info{
+		padding: 2rem;
+	}
+
+
+}
