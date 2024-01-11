@@ -74,54 +74,47 @@ application.get('/signup', (req, res) => {
 
 });
 
-application.post('/signup', (req, res) => {
+application.post('/signup', async (req, res) => {
 	const user_registered_nickname = escape_html(req.body.user_nickname);
 	const user_registered_password = escape_html(req.body.user_passkey);
-
-	//Security validation
-	if (!user_registered_nickname || typeof user_registered_nickname != 'string' || user_registered_nickname.trim() === '') {
-		return res.status(400).send('Invalid nickname!');
+	
+	if (!user_registered_nickname || typeof user_registered_nickname !== 'string' || user_registered_nickname.trim() === '') {
+            return res.status(400).send('Invalid nickname!');
 	}
 
-	if (!user_registered_password|| typeof user_registered_password != 'string' || user_registered_password.trim() === ''){
-		return res.status(400).send('Invalid password!');
-	}
+    if (!user_registered_password || typeof user_registered_password !== 'string' || user_registered_password.trim() === '') {
+            return res.status(400).send('Invalid password!');
+    }
 
-	password_hash(user_registered_password)
-		.then((hashed_password) => {
-			const user_hashed_password = hashed_password;
-			let register_query = users_db.query(`INSERT INTO users (user_nick, user_pass) VALUES ('?1', '?2')`);
-			register_query.run(user_registered_nickname, user_hashed_password);
-		})
-		.catch((error) => {
-			console.log("Error: ", error);
-		});
+	const hashed_password = await password_hash(user_registered_password);
 
+	const register_query = users_db.query('INSERT INTO users (user_nick, user_pass) VALUES ($1, $2)');
+    await register_query.run(user_registered_nickname, hashed_password);
 });
 
 application.listen(port, () => {
 	console.log(`Started at http://localhost:${port}`);
 });
 
+async function user_auth(nickname, inserted_password) {
+    try {
+		const get_user_query = users_db.query(`SELECT user_pass FROM users WHERE user_nick = $1`);
+		const user_found = await get_user_query.get({ $1: nickname });
 
-async function user_auth(nickname, inserted_password){
-	try{
-		const get_user_query = `SELECT user_pass FROM users WHERE user_nick = (?1)`;
-		const user_found = await users_db.query(get_user_query, nickname).get();
+        if (user_found) {
+            const stored_hashed_password = user_found.user_pass;
+            const correct_password = await compare(inserted_password, stored_hashed_password);
 
-		if (user_found){
-			const stored_hashed_password = user_found.user_pass;
-			const correct_password = await compare(inserted_password, stored_hashed_password);
-
-			if (correct_password){
-				console.log("User logged in!");
-			}else{
-				console.log("Incorrect password");
-			}
-		}else{
-			console.log("User not found");
-		}
-	}catch (error){
-		console.error("Error during authentication: ", error);
-	}
+            if (correct_password) {
+                console.log("User logged in!");
+            } else {
+                console.log("Incorrect password");
+            }
+        } else {
+            console.log("User not found");
+        }
+    } catch (error) {
+        console.error("Error during authentication: ", error);
+    }
 }
+
