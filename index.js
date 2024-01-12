@@ -106,17 +106,28 @@ application.post('/signup', async (req, res) => {
 });
 
 application.get('/doubts-list', async (req, res) => {
-	try{
-		const get_all_doubts = 'SELECT * FROM doubts';
-		const doubts_find = await doubts_db.query(get_all_doubts).all();
-		res.render('doubts_list', { doubts: doubts_find});
-	}catch (error){
-		console.error('Error fetching data: ', error);
-		res.status(500).send('Internal Server Error');
-	}
+    try {
+        let get_all_doubts = 'SELECT * FROM doubts';
+        let chosen_study_area = null;
+
+        if (req.query.chosen_study_area) {
+            chosen_study_area = req.query.chosen_study_area;
+            get_all_doubts += ` WHERE doubt_area = $1`;
+        }
+
+        console.log('Chosen Study Area:', chosen_study_area); // Adicione este log
+        console.log('Query:', get_all_doubts); // Adicione este log
+
+		const doubts_find = await doubts_db.query(get_all_doubts).all({ $1: chosen_study_area });
+
+        console.log('Doubts Found:', doubts_find);
+
+        res.render('doubts_list', { doubts: doubts_find });
+    } catch (error) {
+        console.error('Error fetching data: ', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
-
-
 
 application.listen(port, () => {
 	console.log(`Started at http://localhost:${port}`);
