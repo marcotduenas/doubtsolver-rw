@@ -1,4 +1,5 @@
 import express from 'express';
+import ejs from 'ejs';
 import helmet from 'helmet';
 import path from 'path';
 import escape_html from 'escape-html';
@@ -15,17 +16,22 @@ const application = express();
 
 application.use(helmet());
 application.use(express.static(path.join(__dirname, '_public')));
-application.use(express.urlencoded({ extendend: true }));
+application.use(express.urlencoded({ extended: true }));
+
+application.set('views', path.join(__dirname, '_public/templates'));
+application.set('view engine', 'ejs');
 
 application.get('/', (req, res) => {
 	let index_page = path.join(__dirname, './_public/templates', 'doubt.html');
 	res.sendFile(index_page);	
 });
 
-application.post('/', (req, res) => {
+application.post('/', async(req, res) => {
 	const asker_name = escape_html(req.body.name);
 	const study_area = escape_html(req.body.study_area);
 	const doubt_description = escape_html(req.body.doubt_desc);
+
+	console.log(asker_name, study_area, doubt_description);
 
 	if (!asker_name || typeof asker_name != 'string' || asker_name.trim() === '') {
 		return res.status(400).send('Invalid nickname!');
@@ -39,8 +45,12 @@ application.post('/', (req, res) => {
 		return res.status(400).send('Explain your doubt in a better way');
 	}
 
+	const save_doubt_query = doubts_db.query('INSERT INTO doubts (asker_username, doubt_area, doubt_desc) VALUES ($asker_name, $study_area, $doubt_description)');
+    await save_doubt_query.run({ $asker_name: asker_name, $study_area: study_area, $doubt_description: doubt_description });
+
 
 });
+
 
 application.get('/login', (req, res) => {
 	let login_page = path.join(__dirname, './_public/templates', 'login.html');
@@ -63,7 +73,10 @@ application.post('/login', (req, res) => {
 		return res.status(400).send('Invalid password!');
 	}
 	
-	user_auth(user_nickname, user_passkey);
+	if (user_auth(user_nickname, user_passkey)){
+		res.redirect('/');
+	}
+
 
 });
 
@@ -91,6 +104,19 @@ application.post('/signup', async (req, res) => {
 	const register_query = users_db.query('INSERT INTO users (user_nick, user_pass) VALUES ($1, $2)');
     await register_query.run(user_registered_nickname, hashed_password);
 });
+
+application.get('/doubts-list', async (req, res) => {
+	try{
+		const get_all_doubts = 'SELECT * FROM doubts';
+		const doubts_find = await doubts_db.query(get_all_doubts).all();
+		res.render('doubts_list', { doubts: doubts_find});
+	}catch (error){
+		console.error('Error fetching data: ', error);
+		res.status(500).send('Internal Server Error');
+	}
+});
+
+
 
 application.listen(port, () => {
 	console.log(`Started at http://localhost:${port}`);

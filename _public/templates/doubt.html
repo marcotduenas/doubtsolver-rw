@@ -4,14 +4,19 @@
 		<title>Doubt Solver</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link href="css/style.css" rel="stylesheet">
+		<link href="../assets/style.css" rel="stylesheet">
 	</head>
 	<body>
-		<form>
-			<input name="name" type="text" placeholder="John Doe" required><br>
-			<input name="study_area" type="text" placeholder="Physics" required><br>
-			<input name="doubt_desc" type="text" placeholder="What do you want to know?" required><br>
-			<input type="submit" value="Submit">
-		</form>
+		<div class="form-wrapper">
+			<h1 class="title">What is your doubt?</h1>
+			<div class="form-area">
+				<form method="POST" action="">
+					<input name="name" type="text" placeholder="John Doe" required><br>
+					<input name="study_area" type="text" placeholder="Physics" required><br>
+					<input name="doubt_desc" type="text" placeholder="What do you want to know?" required><br>
+					<input class="form-button" type="submit" value="Submit">
+				</form>
+			</div>
+		</div>
 	</body>
 </html>
