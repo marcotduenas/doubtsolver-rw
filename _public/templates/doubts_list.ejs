@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doubts List</title>
-	<link rel="stylesheet" href="../assets/doubts-list.css">
+    <link rel="stylesheet" href="../assets/doubts-list.css">
 </head>
+
 <body>
-	<div class="info-table">
-		<h1 class="title">Doubts List</h1>
-		<table>
-			<tr>
-				<th>Asker Name</th>
-				<th>Study Area</th>
-				<th>Doubt Description</th>
-			</tr>
-			<% doubts.forEach(doubt => { %>
-				<tr>
-					<td><%= doubt.asker_username %></td>
-					<td><%= doubt.doubt_area %></td>
-					<td><%= doubt.doubt_desc %></td>
-				</tr>
-			<% }); %>
-		</table>
-	</div>
+    <div class="info-table">
+        <h1 class="title">Doubts List</h1>
+        <input type="text" name="study_area_filter" id="study_area_filter">
+        <button id="search">Search</button>
+        <table>
+            <tr>
+                <th>Asker Name</th>
+                <th>Study Area</th>
+                <th>Doubt Description</th>
+            </tr>
+            <% if (doubts && Array.isArray(doubts)) { %>
+                <% doubts.forEach(doubt => { %>
+                    <tr>
+                        <td><%= doubt.asker_username %></td>
+                        <td><%= doubt.doubt_area %></td>
+                        <td><%= doubt.doubt_desc %></td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr>
+                    <td colspan="3">No doubts found</td>
+                </tr>
+            <% } %>
+        </table>
+    </div>
+    <script src="../scripts/filter_doubts.js"></script>
 </body>
+
 </html>
 
