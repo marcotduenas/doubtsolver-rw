@@ -1,4 +1,5 @@
 import express from 'express';
+import session from 'express-session';
 import ejs from 'ejs';
 import helmet from 'helmet';
 import path from 'path';
@@ -17,6 +18,11 @@ const application = express();
 application.use(helmet());
 application.use(express.static(path.join(__dirname, '_public')));
 application.use(express.urlencoded({ extended: true }));
+application.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: true,
+}));
 
 application.set('views', path.join(__dirname, '_public/templates'));
 application.set('view engine', 'ejs');
@@ -51,12 +57,10 @@ application.post('/', async(req, res) => {
 
 });
 
-
 application.get('/login', (req, res) => {
 	let login_page = path.join(__dirname, './_public/templates', 'login.html');
 	res.sendFile(login_page);
 });
-
 
 application.post('/login', (req, res) => {
 	
@@ -74,12 +78,11 @@ application.post('/login', (req, res) => {
 	}
 	
 	if (user_auth(user_nickname, user_passkey)){
-		res.redirect('/');
+		req.session.user = {username: user_nickname, user_pass: user_passkey };
+		res.redirect('/doubts-list');
 	}
 
-
 });
-
 
 application.get('/signup', (req, res) => {
 	let signup_page = path.join(__dirname, './_public/templates', 'signup.html');
@@ -103,6 +106,7 @@ application.post('/signup', async (req, res) => {
 
 	const register_query = users_db.query('INSERT INTO users (user_nick, user_pass) VALUES ($1, $2)');
     await register_query.run(user_registered_nickname, hashed_password);
+
 });
 
 application.get('/doubts-list', async (req, res) => {
@@ -115,18 +119,19 @@ application.get('/doubts-list', async (req, res) => {
             get_all_doubts += ` WHERE doubt_area = $1`;
         }
 
-        console.log('Chosen Study Area:', chosen_study_area); // Adicione este log
-        console.log('Query:', get_all_doubts); // Adicione este log
-
 		const doubts_find = await doubts_db.query(get_all_doubts).all({ $1: chosen_study_area });
 
-        console.log('Doubts Found:', doubts_find);
+		if(req.session.user){
+			res.render('doubts_list', { doubts: doubts_find });
+		}else{
+			res.redirect('/login');
+		}
 
-        res.render('doubts_list', { doubts: doubts_find });
     } catch (error) {
         console.error('Error fetching data: ', error);
         res.status(500).send('Internal Server Error');
     }
+
 });
 
 application.listen(port, () => {

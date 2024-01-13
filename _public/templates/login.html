@@ -5,17 +5,18 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="../assets/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 	</head>
 	<body>
 		<div class="form-wrapper">
-					<h1 class="title">Professors Login</h1>
+					<h1 class="title">Responders Login</h1>
 			<div class="form-area">
 				<form method="POST" action="">
-					<label>Nickname</label><br>
-					<input type="text" name="user_nickname" value=""><br>
+					<label><i class="fa-solid fa-user"></i> Nickname</label><br>
+					<input type="text" name="user_nickname" placeholder="Your nickname"><br>
 					<br>
-					<label>Password</label><br>
-					<input type="password" name="user_passkey" value=""><br>
+					<label><i class="fa-solid fa-lock"></i> Password</label><br>
+					<input type="password" name="user_passkey" placeholder="Your password" ><br>
 					<input class="form-button" type="submit" value="Login"></input>
 					<script src="../scripts/route_navigation.js"></script>
 				</form>	
