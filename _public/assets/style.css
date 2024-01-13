@@ -6,6 +6,11 @@
 	font-family: 'Lato', sans-serif;
 }
 
+.welcome{
+	text-align: center;
+	padding: 3.5rem 0 0;
+	color: #005577;
+}
 
 .title{
 	margin: 2rem 0 .5rem;
@@ -28,6 +33,10 @@
 	padding: 20px;
 }
 
+label{
+	align-items: center;
+	color: #404040;
+}
 
 input[type=text], input[type=password]{
 	background: transparent;
